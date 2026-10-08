@@ -1,0 +1,32 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Only YOUR Firebase user may read anything or send commands.
+    // Replace the text below with your UID (Firebase console > Authentication > Users).
+    function isOwner() {
+      return request.auth != null && request.auth.uid == 'PASTE_YOUR_FIREBASE_UID_HERE';
+    }
+
+    // Written only by the bot (the Admin SDK on your PC bypasses these rules).
+    match /bot/{doc}      { allow read: if isOwner(); allow write: if false; }
+    match /events/{id}    { allow read: if isOwner(); allow write: if false; }
+    match /trades/{id}    { allow read: if isOwner(); allow write: if false; }
+
+    // The web app may only CREATE well-formed, pending commands stamped with the server time.
+    // The bot validates every command again before doing anything.
+    match /commands/{id} {
+      allow read: if isOwner();
+      allow create: if isOwner()
+        && request.resource.data.keys().hasOnly(['cmd', 'args', 'uid', 'status', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.status == 'pending'
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.cmd is string
+        && request.resource.data.args is map;
+      allow update, delete: if false;
+    }
+
+    match /{document=**} { allow read, write: if false; }
+  }
+}

@@ -1,0 +1,17 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+state/
+logs/
+data/
+results/
+reports/
+*.db
+*.db-wal
+*.db-shm
+serviceAccount*.json
+*-firebase-adminsdk-*.json
+STOP
+PANIC
+config.json

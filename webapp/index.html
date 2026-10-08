@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>BNB Bot Control</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="setup" hidden>
+  <div class="loginbox"><div class="card" style="width:min(520px,100%)">
+    <h1 style="margin-top:0">Firebase is not configured yet</h1>
+    <p>Open <code>webapp/firebase-config.js</code> and paste your Firebase web-app settings (steps are in <b>FIREBASE_SETUP.md</b>).</p>
+    <p><a href="?demo=1">Preview the dashboard with demo data</a> &middot; <a href="?demo=1&amp;live=0">demo without a real-money account</a></p>
+  </div></div>
+</div>
+
+<div id="login" hidden>
+  <form id="loginform" class="card" autocomplete="on">
+    <h1>BNB Bot Control</h1>
+    <label class="muted" for="email">Email</label>
+    <input type="email" id="email" name="email" autocomplete="username" required>
+    <label class="muted" for="pw">Password</label>
+    <input type="password" id="pw" name="password" autocomplete="current-password" required>
+    <div class="err" id="loginerr" role="alert"></div>
+    <button class="btn primary" type="submit">Sign in</button>
+  </form>
+</div>
+
+<div id="app" hidden>
+  <header class="top"><div class="wrap">
+    <span class="brand">BNB Bot</span>
+    <span id="hstatus" class="row"></span>
+    <span class="spacer"></span>
+    <span id="who" class="muted"></span>
+    <button class="linkbtn" id="signout">Sign out</button>
+  </div></header>
+
+  <div class="wrap">
+    <div id="banners"></div>
+
+    <section aria-labelledby="h-acc">
+      <h2 id="h-acc">Accounts <small>two accounts trade the same live market data</small></h2>
+      <div class="grid2" id="accounts"></div>
+    </section>
+
+    <section aria-labelledby="h-chart">
+      <h2 id="h-chart">Balance over time</h2>
+      <div class="card">
+        <div class="filters" id="rangefilters"></div>
+        <div id="chart"></div>
+        <div class="legend" id="chartlegend"></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="h-pos">
+      <h2 id="h-pos">Open positions</h2>
+      <div class="card tablewrap" id="positions"></div>
+    </section>
+
+    <section aria-labelledby="h-scan">
+      <h2 id="h-scan">What the bot is analysing <small id="scanmeta"></small></h2>
+      <div class="card">
+        <div class="tablewrap" id="scanner"></div>
+        <div class="legend">
+          <span class="item"><span class="bar" style="width:34px"><i style="width:60%"></i></span> score (0&ndash;1)</span>
+          <span class="item"><span class="bar" style="width:20px;height:10px;border:0;background:none"><b style="left:8px"></b></span> buy threshold, Sim</span>
+          <span class="item"><span class="bar" style="width:20px;height:10px;border:0;background:none"><b class="live" style="left:8px"></b></span> buy threshold, Live</span>
+          <span class="item muted">Signals: trend &middot; 1h trend &middot; RSI &middot; MACD &middot; breakout &middot; volume (darker = stronger)</span>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="h-feed">
+      <h2 id="h-feed">Live activity</h2>
+      <div class="filters" id="feedfilters"></div>
+      <div class="feed" id="feed" aria-live="off"></div>
+    </section>
+
+    <section aria-labelledby="h-tr">
+      <h2 id="h-tr">Closed trades</h2>
+      <div class="filters" id="tradefilters"></div>
+      <div class="card tablewrap" id="trades"></div>
+    </section>
+
+    <section aria-labelledby="h-lists">
+      <h2 id="h-lists">Coins to investigate or avoid</h2>
+      <div class="grid2">
+        <div class="card">
+          <b>Investigate</b>
+          <p class="muted" style="margin:4px 0 10px">Added coins are analysed on every scan, even if they are not among the most volatile. The bot still only buys when the score and every safety check pass.</p>
+          <form class="row" id="watchform"><input type="text" id="watchin" placeholder="e.g. SOL or PEPE/USDT" aria-label="Coin to investigate" maxlength="20"><button class="btn primary" type="submit">Investigate</button></form>
+          <div class="filters" id="watchchips" style="margin-top:10px"></div>
+        </div>
+        <div class="card">
+          <b>Never trade</b>
+          <p class="muted" style="margin:4px 0 10px">Blocked coins are skipped completely by both accounts.</p>
+          <form class="row" id="blockform"><input type="text" id="blockin" placeholder="e.g. LUNC" aria-label="Coin to block" maxlength="20"><button class="btn" type="submit">Block</button></form>
+          <div class="filters" id="blockchips" style="margin-top:10px"></div>
+        </div>
+      </div>
+      <div class="row" style="margin-top:12px"><button class="btn" id="scannow">Scan now</button><span class="muted">Commands sent from here are checked and carried out by the bot on your PC.</span></div>
+    </section>
+
+    <section aria-labelledby="h-cmd">
+      <h2 id="h-cmd">Recent commands</h2>
+      <div class="card tablewrap" id="commands"></div>
+    </section>
+  </div>
+</div>
+
+<dialog id="modal"><form method="dialog"><h3 id="mtitle"></h3><p id="mbody"></p><div class="row"><button class="btn" value="cancel">Cancel</button><button class="btn primary" id="mok" value="ok"></button></div></form></dialog>
+<div id="toasts" role="status" aria-live="polite"></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>
